@@ -17,7 +17,7 @@ const Classes = () => {
 
     const fetchRoutine = async () => {
         try {
-            const { data } = await axios.get(`https://school-management-system-5ci5.vercel.app/api/routines/${selectedClass}`, {
+            const { data } = await axios.get(`/api/routines/${selectedClass}`, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setRoutine(data);
@@ -37,7 +37,7 @@ const Classes = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('https://school-management-system-5ci5.vercel.app/api/routines', { ...formData, class: selectedClass }, {
+            await axios.post('/api/routines', { ...formData, class: selectedClass }, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${user.token}`
