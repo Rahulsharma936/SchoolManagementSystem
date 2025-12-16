@@ -27,7 +27,7 @@ const Signup = () => {
             };
 
             const { data } = await axios.post(
-                'https://school-management-system-5ci5.vercel.app/api/users/register',
+                '/api/users/register',
                 { name, email, password },
                 config
             );
