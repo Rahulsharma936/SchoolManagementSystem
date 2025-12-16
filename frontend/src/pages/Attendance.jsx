@@ -18,7 +18,7 @@ const Attendance = () => {
             // Need a way to filter students by class in backend or frontend. 
             // For now fetching all and filtering in frontend (not efficient for large scale but fine for MVP).
             // Or I can add query param to student API.
-            const { data } = await axios.get('http://localhost:5000/api/students', {
+            const { data } = await axios.get('https://school-management-system-5ci5.vercel.app/api/students', {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             const classStudents = data.filter(s => s.class === selectedClass);
@@ -46,7 +46,7 @@ const Attendance = () => {
         }));
 
         try {
-            await axios.post('http://localhost:5000/api/attendance', {
+            await axios.post('https://school-management-system-5ci5.vercel.app/api/attendance', {
                 date: new Date(),
                 class: selectedClass,
                 records

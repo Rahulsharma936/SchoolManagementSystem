@@ -17,7 +17,7 @@ const Fee = () => {
 
     const fetchFees = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/fees', {
+            const { data } = await axios.get('https://school-management-system-5ci5.vercel.app/api/fees', {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setFees(data);
@@ -28,7 +28,7 @@ const Fee = () => {
 
     const fetchStudents = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/students', {
+            const { data } = await axios.get('https://school-management-system-5ci5.vercel.app/api/students', {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setStudents(data);
@@ -49,7 +49,7 @@ const Fee = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/fees', formData, {
+            await axios.post('https://school-management-system-5ci5.vercel.app/api/fees', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${user.token}`

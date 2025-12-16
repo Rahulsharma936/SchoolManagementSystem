@@ -13,7 +13,7 @@ const Notice = () => {
 
     const fetchNotices = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/notices', {
+            const { data } = await axios.get('https://school-management-system-5ci5.vercel.app/api/notices', {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             setNotices(data);
@@ -33,7 +33,7 @@ const Notice = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/notices', { ...formData, postedBy: user.name }, {
+            await axios.post('https://school-management-system-5ci5.vercel.app/api/notices', { ...formData, postedBy: user.name }, {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${user.token}`
