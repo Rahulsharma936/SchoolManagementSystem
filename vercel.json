@@ -1,3 +1,4 @@
+```json
 {
     "version": 2,
     "builds": [
@@ -13,21 +14,15 @@
             }
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "/backend/server.js"
+            "source": "/api/(.*)",
+            "destination": "/backend/server.js"
         },
         {
-            "src": "/(.*)",
-            "dest": "/frontend/$1"
-        },
-        {
-            "handle": "filesystem"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/frontend/index.html"
+            "source": "/(.*)",
+            "destination": "/frontend/index.html"
         }
     ]
 }
+```
