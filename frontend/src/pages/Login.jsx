@@ -20,7 +20,7 @@ const Login = () => {
             };
 
             const { data } = await axios.post(
-                '/api/users/login',
+                'https://school-management-system-5ci5.vercel.app/api/users/login',
                 { email, password },
                 config
             );
