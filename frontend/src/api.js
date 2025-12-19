@@ -1,11 +1,12 @@
 import axios from 'axios';
+import config from './config';
 
- 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+    baseURL: config.API_URL,
 });
 
- 
+
+
 api.interceptors.request.use(
     (config) => {
         const userInfo = localStorage.getItem('userInfo');
