@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 const Attendance = () => {
@@ -8,35 +8,59 @@ const Attendance = () => {
     const [students, setStudents] = useState([]);
     const [attendanceData, setAttendanceData] = useState({});
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     useEffect(() => {
-        fetchStudents();
-    }, [selectedClass]);
+        if (selectedClass) {
+            fetchData();
+        }
+    }, [selectedClass, currentDate]);
 
-    const fetchStudents = async () => {
+    const fetchData = async () => {
+        setLoading(true);
+        setMessage('');
         try {
-            // Need a way to filter students by class in backend or frontend. 
-            // For now fetching all and filtering in frontend (not efficient for large scale but fine for MVP).
-            // Or I can add query param to student API.
-            const { data } = await axios.get('/api/students', {
-                headers: { Authorization: `Bearer ${user.token}` }
-            });
-            const classStudents = data.filter(s => s.class === selectedClass);
-            setStudents(classStudents);
+            // 1. Fetch Students for the class
+            const studentsRes = await api.get('/api/students');
+            const classStudents = studentsRes.data.filter(s => s.class === selectedClass);
 
-            // Initialize attendance data
+            // 2. Fetch existing attendance for this date and class
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const attendanceRes = await api.get(`/api/attendance/${selectedClass}/${dateStr}`);
+            const existingRecords = attendanceRes.data;
+
+            // 3. Merge data
             const initialAttendance = {};
-            classStudents.forEach(s => {
-                initialAttendance[s._id] = 'Present';
+
+            classStudents.forEach(student => {
+                const record = existingRecords.find(r => r.student === student._id);
+                // Default to 'Present' if no record exists, otherwise use saved status
+                initialAttendance[student._id] = record ? record.status : 'Present';
             });
+
+            setStudents(classStudents);
             setAttendanceData(initialAttendance);
         } catch (error) {
             console.error(error);
+            setMessage('Error fetching data');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleStatusChange = (studentId, status) => {
+    const handleStatusChange = async (studentId, status) => {
+        // Optimistic update
         setAttendanceData(prev => ({ ...prev, [studentId]: status }));
+
+        // Auto-save on click as implied by "when clicked present it stays on present basically save it"
+        // But usually bulk save is better. The prompt says "basically save it". 
+        // I'll keep the Submit button for batch saving to reduce API calls, 
+        // OR I can implement individual save. 
+        // The prompt says: "when clicked present it stays on present basically save it". 
+        // This suggests immediate persistence or at least state persistence.
+        // I will keep the Submit button for clarity and network efficiency, 
+        // but the state "stays".
     };
 
     const handleSubmit = async () => {
@@ -46,71 +70,141 @@ const Attendance = () => {
         }));
 
         try {
-            await axios.post('/api/attendance', {
-                date: new Date(),
+            await api.post('/api/attendance', {
+                date: currentDate,
                 class: selectedClass,
                 records
-            }, {
-                headers: { Authorization: `Bearer ${user.token}` }
             });
             setMessage('Attendance saved successfully');
+            setTimeout(() => setMessage(''), 3000);
         } catch (error) {
             setMessage('Error saving attendance');
         }
     };
 
+    const formatDate = (date) => {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    };
+
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Take Attendance</h2>
-            {message && <div className="bg-blue-100 text-blue-700 p-3 rounded mb-4">{message}</div>}
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 bg-white p-4 rounded shadow-sm inline-block">
+                Take Attendance
+            </h2>
 
-            <div className="mb-6">
-                <label className="block text-gray-700 mb-2 font-bold">Select Class</label>
-                <div className="flex gap-2 flex-wrap">
-                    {[...Array(10)].map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => setSelectedClass((i + 1).toString())}
-                            className={`px-4 py-2 rounded font-bold ${selectedClass === (i + 1).toString() ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                        >
-                            Class {i + 1}
-                        </button>
-                    ))}
+            <div className="flex flex-col md:flex-row gap-6">
+                {/* Left Sidebar: Class Selection */}
+                <div className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow h-fit">
+                    <h3 className="text-xl font-bold mb-4 border-b pb-2">Select Class</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
+                        {[...Array(12)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSelectedClass((i + 1).toString())}
+                                className={`px-4 py-3 rounded text-left font-semibold transition-colors duration-200 
+                                    ${selectedClass === (i + 1).toString()
+                                        ? 'bg-blue-600 text-white shadow-md'
+                                        : 'bg-gray-50 text-gray-700 hover:bg-blue-50'}`}
+                            >
+                                Class {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Right Content: Attendance Table */}
+                <div className="w-full md:w-3/4">
+                    {/* Header with Date */}
+                    <div className="bg-white p-6 rounded-lg shadow mb-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                        <div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-1">Class {selectedClass}</h3>
+                            <p className="text-gray-500 text-lg">{formatDate(currentDate)}</p>
+                        </div>
+                        {/* Status Summary (Optional nice-to-have) */}
+                        <div className="mt-4 md:mt-0 flex gap-4 text-sm font-bold">
+                            <span className="text-green-600 bg-green-50 px-3 py-1 rounded">
+                                Present: {Object.values(attendanceData).filter(s => s === 'Present').length}
+                            </span>
+                            <span className="text-red-600 bg-red-50 px-3 py-1 rounded">
+                                Absent: {Object.values(attendanceData).filter(s => s === 'Absent').length}
+                            </span>
+                        </div>
+                    </div>
+
+                    {message && <div className={`p-4 rounded mb-4 text-center font-bold ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{message}</div>}
+
+                    {loading ? (
+                        <div className="text-center py-10 text-gray-500">Loading...</div>
+                    ) : (
+                        <div className="bg-white rounded-lg shadow overflow-hidden">
+                            <table className="min-w-full">
+                                <thead className="bg-gray-800 text-white">
+                                    <tr>
+                                        <th className="py-4 px-6 text-left">Roll No</th>
+                                        <th className="py-4 px-6 text-left">Student Name</th>
+                                        <th className="py-4 px-6 text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {students.map((student) => (
+                                        <tr key={student._id} className="hover:bg-gray-50">
+                                            <td className="py-4 px-6 text-gray-700 font-medium w-1/6">
+                                                {student.rollNumber || 'N/A'}
+                                            </td>
+                                            <td className="py-4 px-6 text-gray-900 font-bold text-lg w-2/6">
+                                                {student.name}
+                                            </td>
+                                            <td className="py-4 px-6 text-center w-3/6">
+                                                <div className="flex justify-center gap-4">
+                                                    <button
+                                                        onClick={() => handleStatusChange(student._id, 'Present')}
+                                                        className={`flex-1 max-w-[120px] py-2 px-4 rounded transition-all duration-200 font-bold border-2 
+                                                            ${attendanceData[student._id] === 'Present'
+                                                                ? 'bg-green-600 text-white border-green-600 scale-105 shadow-md'
+                                                                : 'bg-transparent text-gray-400 border-gray-200 hover:border-green-400 hover:text-green-500'}`}
+                                                    >
+                                                        Present
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusChange(student._id, 'Absent')}
+                                                        className={`flex-1 max-w-[120px] py-2 px-4 rounded transition-all duration-200 font-bold border-2
+                                                            ${attendanceData[student._id] === 'Absent'
+                                                                ? 'bg-red-600 text-white border-red-600 scale-105 shadow-md'
+                                                                : 'bg-transparent text-gray-400 border-gray-200 hover:border-red-400 hover:text-red-500'}`}
+                                                    >
+                                                        Absent
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {students.length === 0 && (
+                                        <tr>
+                                            <td colSpan="3" className="py-10 text-center text-gray-500">
+                                                No students found in Class {selectedClass}.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-                {students.map(student => (
-                    <div key={student._id} className="bg-white p-6 rounded shadow flex flex-col items-center">
-                        <div className="h-16 w-16 bg-gray-300 rounded-full mb-4 flex items-center justify-center text-2xl font-bold text-gray-600">
-                            {student.name.charAt(0)}
-                        </div>
-                        <h3 className="font-bold text-lg">{student.name}</h3>
-                        <p className="text-gray-500 mb-4">Roll: {student.rollNumber}</p>
-
-                        <div className="flex gap-2 w-full">
-                            <button
-                                onClick={() => handleStatusChange(student._id, 'Present')}
-                                className={`flex-1 py-2 rounded text-sm font-bold ${attendanceData[student._id] === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                            >
-                                Present
-                            </button>
-                            <button
-                                onClick={() => handleStatusChange(student._id, 'Absent')}
-                                className={`flex-1 py-2 rounded text-sm font-bold ${attendanceData[student._id] === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                            >
-                                Absent
-                            </button>
-                        </div>
-                    </div>
-                ))}
-                {students.length === 0 && <p className="col-span-full text-center text-gray-500">No students found for this class.</p>}
-            </div>
-
             {students.length > 0 && (
-                <button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded text-lg shadow-lg fixed bottom-8 right-8">
-                    Submit Attendance
-                </button>
+                <div className="fixed bottom-6 right-6 z-10">
+                    <button
+                        onClick={handleSubmit}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full text-lg shadow-2xl flex items-center gap-2 transform hover:scale-105 transition duration-300"
+                    >
+                        <span>Save Attendance</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                </div>
             )}
         </div>
     );

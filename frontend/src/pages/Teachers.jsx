@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const Teachers = () => {
@@ -13,12 +13,7 @@ const Teachers = () => {
         const fetchTeachers = async () => {
             if (!user) return;
             try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                };
-                const res = await axios.get('/api/teachers', config);
+                const res = await api.get('/api/teachers');
                 setTeachers(res.data);
             } catch (error) {
                 console.error("Error fetching teachers:", error);
@@ -31,12 +26,7 @@ const Teachers = () => {
     const handleDeleteTeacher = async (id) => {
         if (window.confirm('Are you sure you want to delete this teacher?')) {
             try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                };
-                await axios.delete(`/api/teachers/${id}`, config);
+                await api.delete(`/api/teachers/${id}`);
                 setTeachers(teachers.filter(teacher => teacher._id !== id));
             } catch (error) {
                 console.error("Error deleting teacher:", error);
@@ -54,7 +44,7 @@ const Teachers = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800">Teachers</h1>
                 <button
-                    onClick={() => navigate('/add-teacher')} 
+                    onClick={() => navigate('/add-teacher')}
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                     Add Teacher

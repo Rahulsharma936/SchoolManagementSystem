@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,14 +24,7 @@ const AddTeacher = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
-            await axios.post('/api/teachers', formData, config);
+            await api.post('/api/teachers', formData);
             setSuccess('Teacher added successfully!');
             setError('');
             setTimeout(() => navigate('/'), 2000);

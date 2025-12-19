@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api';
 
 const Home = () => {
     const { user } = useAuth();
@@ -15,13 +15,8 @@ const Home = () => {
         const fetchData = async () => {
             if (!user) return;
             try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                };
                 // Fetch Students
-                const studentsRes = await axios.get('/api/students', config);
+                const studentsRes = await api.get('/api/students');
                 setStudents(studentsRes.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -39,12 +34,7 @@ const Home = () => {
         if (!searchQuery.trim()) return;
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-            const res = await axios.get(`/api/students/search/${searchQuery}`, config);
+            const res = await api.get(`/api/students/search/${searchQuery}`);
             setSearchResult(res.data);
         } catch (error) {
             setSearchError('Student not found or error occurred.');
@@ -55,12 +45,7 @@ const Home = () => {
     const handleDeleteStudent = async (id) => {
         if (window.confirm('Are you sure you want to delete this student?')) {
             try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`
-                    }
-                };
-                await axios.delete(`/api/students/${id}`, config);
+                await api.delete(`/api/students/${id}`);
 
                 // Refresh list and clear search result if matched
                 setStudents(students.filter(student => student._id !== id));

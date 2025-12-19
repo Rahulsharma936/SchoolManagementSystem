@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -13,16 +13,9 @@ const Login = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            };
-
-            const { data } = await axios.post(
+            const { data } = await api.post(
                 '/api/users/login',
-                { email, password },
-                config
+                { email, password }
             );
 
             login(data);

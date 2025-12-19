@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 const Classes = () => {
@@ -17,9 +17,7 @@ const Classes = () => {
 
     const fetchRoutine = async () => {
         try {
-            const { data } = await axios.get(`/api/routines/${selectedClass}`, {
-                headers: { Authorization: `Bearer ${user.token}` }
-            });
+            const { data } = await api.get(`/api/routines/${selectedClass}`);
             setRoutine(data);
         } catch (error) {
             console.error(error);
@@ -37,12 +35,7 @@ const Classes = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/routines', { ...formData, class: selectedClass }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`
-                }
-            });
+            await api.post('/api/routines', { ...formData, class: selectedClass });
             setMessage('Routine added successfully');
             setFormData({ day: 'Monday', period: '', subject: '', teacher: '', time: '' });
             fetchRoutine();

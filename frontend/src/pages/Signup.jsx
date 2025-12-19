@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const Signup = () => {
     const [name, setName] = useState('');
@@ -20,16 +20,9 @@ const Signup = () => {
         }
 
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            };
-
-            const { data } = await axios.post(
+            const { data } = await api.post(
                 '/api/users/register',
-                { name, email, password },
-                config
+                { name, email, password }
             );
 
             login(data);

@@ -1,28 +1,30 @@
 import mongoose from 'mongoose';
 
-const attendanceSchema = new mongoose.Schema({
+const attendanceSchema = mongoose.Schema({
+    student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student',
+        required: true
+    },
     date: {
         type: Date,
-        required: true,
-        default: Date.now,
+        required: true
     },
     class: {
         type: String,
-        required: true,
+        required: true
     },
-    records: [{
-        student: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Student',
-            required: true,
-        },
-        status: {
-            type: String,
-            enum: ['Present', 'Absent', 'Leave'],
-            required: true,
-        }
-    }]
-}, { timestamps: true });
+    status: {
+        type: String,
+        enum: ['Present', 'Absent'],
+        default: 'Present'
+    }
+}, {
+    timestamps: true
+});
+
+// Compound index to ensure one record per student per day
+attendanceSchema.index({ student: 1, date: 1 }, { unique: true });
 
 const Attendance = mongoose.model('Attendance', attendanceSchema);
 

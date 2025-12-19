@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
 const Notice = () => {
@@ -13,9 +13,7 @@ const Notice = () => {
 
     const fetchNotices = async () => {
         try {
-            const { data } = await axios.get('/api/notices', {
-                headers: { Authorization: `Bearer ${user.token}` }
-            });
+            const { data } = await api.get('/api/notices');
             setNotices(data);
         } catch (error) {
             console.error(error);
@@ -33,12 +31,7 @@ const Notice = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/notices', { ...formData, postedBy: user.name }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${user.token}`
-                }
-            });
+            await api.post('/api/notices', { ...formData, postedBy: user.name });
             setMessage('Notice posted successfully');
             setFormData({ title: '', content: '' });
             fetchNotices();
