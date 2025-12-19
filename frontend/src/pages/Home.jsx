@@ -15,7 +15,7 @@ const Home = () => {
         const fetchData = async () => {
             if (!user) return;
             try {
-                // Fetch Students
+                 
                 const studentsRes = await api.get('/api/students');
                 setStudents(studentsRes.data);
             } catch (error) {
@@ -47,7 +47,7 @@ const Home = () => {
             try {
                 await api.delete(`/api/students/${id}`);
 
-                // Refresh list and clear search result if matched
+                 
                 setStudents(students.filter(student => student._id !== id));
                 if (searchResult && searchResult._id === id) {
                     setSearchResult(null);
@@ -112,11 +112,11 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Students Section */}
+            { }
             <div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Students Section</h2>
 
-                {/* Search */}
+                { }
                 <div className="bg-white p-6 rounded-lg shadow mb-8">
                     <h3 className="text-xl font-semibold mb-4">Search Student</h3>
                     <form onSubmit={handleSearch} className="flex gap-4 mb-4">
@@ -158,7 +158,7 @@ const Home = () => {
                     )}
                 </div>
 
-                {/* Recent Students List */}
+                { }
                 <div className="bg-white p-6 rounded-lg shadow">
                     <h3 className="text-xl font-semibold mb-4">Recently Added Students</h3>
                     <div className="overflow-x-auto">

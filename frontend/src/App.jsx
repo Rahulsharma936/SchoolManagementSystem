@@ -3,7 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Layout from './components/Layout';
-// Import other pages as placeholders for now or real
+ 
 import Home from './pages/Home';
 import Admission from './pages/Admission';
 import AddTeacher from './pages/AddTeacher';
@@ -13,7 +13,7 @@ import Attendance from './pages/Attendance';
 import Classes from './pages/Classes';
 import Teachers from './pages/Teachers';
 
-// Protected Route Component
+ 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   if (!user) {
@@ -54,7 +54,7 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Placeholders for other routes */}
+          { }
           <Route path="/classes" element={
             <ProtectedRoute>
               <Layout>

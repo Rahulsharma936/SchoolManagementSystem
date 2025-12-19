@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-// Create an Axios instance with a dynamic base URL
+ 
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
 });
 
-// Configure interceptors to automatically add the token if it exists
+ 
 api.interceptors.request.use(
     (config) => {
         const userInfo = localStorage.getItem('userInfo');

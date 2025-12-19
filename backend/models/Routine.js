@@ -6,11 +6,11 @@ const routineSchema = new mongoose.Schema({
         required: true,
     },
     day: {
-        type: String, // e.g., Monday, Tuesday
+        type: String,
         required: true,
     },
     period: {
-        type: Number, // 1 to 8 maybe?
+        type: Number,  
         required: true,
     },
     subject: {
@@ -22,7 +22,7 @@ const routineSchema = new mongoose.Schema({
         required: true,
     },
     time: {
-        type: String, // e.g. "10:00 AM - 11:00 AM"
+        type: String, 
     }
 }, { timestamps: true });
 

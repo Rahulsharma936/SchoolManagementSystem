@@ -1,27 +1,27 @@
 import Attendance from '../models/Attendance.js';
 
-// @desc    Take/Record attendance
-// @route   POST /api/attendance
-// @access  Private/Admin
+ 
+ 
+ 
 const takeAttendance = async (req, res) => {
     const { date, class: className, records } = req.body;
 
     try {
-        // Check if attendance already exists for this date and class, if so update or reject?
-        // For simplicity, let's assume we create a new document or update if exists.
-        // Let's just create new for now as per "take attendance" usually implies a daily action.
+         
+         
+         
 
-        // Check duplication for simple robustness
+         
         const existingInterest = await Attendance.findOne({ date: new Date(date), class: className });
         if (existingInterest) {
-            // If updating, logic would be different. Let's return error for now.
+             
             return res.status(400).json({ message: 'Attendance already taken for this date and class' });
         }
 
         const attendance = new Attendance({
             date: new Date(date),
             class: className,
-            records // Expecting array of { studentId, status }
+            records  
         });
 
         const createdAttendance = await attendance.save();
@@ -31,9 +31,9 @@ const takeAttendance = async (req, res) => {
     }
 };
 
-// @desc    Get attendance by class and date (optional)
-// @route   GET /api/attendance/:class
-// @access  Private
+ 
+ 
+ 
 const getAttendance = async (req, res) => {
     try {
         const { date } = req.query;

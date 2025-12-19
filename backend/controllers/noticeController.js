@@ -1,8 +1,8 @@
 import Notice from '../models/Notice.js';
 
-// @desc    Add a notice
-// @route   POST /api/notices
-// @access  Private/Admin
+ 
+ 
+ 
 const addNotice = async (req, res) => {
     const { title, content, postedBy } = req.body;
 
@@ -20,9 +20,9 @@ const addNotice = async (req, res) => {
     }
 };
 
-// @desc    Get all notices
-// @route   GET /api/notices
-// @access  Private
+ 
+ 
+ 
 const getNotices = async (req, res) => {
     try {
         const notices = await Notice.find({}).sort({ date: -1 });

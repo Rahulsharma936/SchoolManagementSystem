@@ -21,21 +21,21 @@ const Attendance = () => {
         setLoading(true);
         setMessage('');
         try {
-            // 1. Fetch Students for the class
+             
             const studentsRes = await api.get('/api/students');
             const classStudents = studentsRes.data.filter(s => s.class === selectedClass);
 
-            // 2. Fetch existing attendance for this date and class
+             
             const dateStr = currentDate.toISOString().split('T')[0];
             const attendanceRes = await api.get(`/api/attendance/${selectedClass}/${dateStr}`);
             const existingRecords = attendanceRes.data;
 
-            // 3. Merge data
+             
             const initialAttendance = {};
 
             classStudents.forEach(student => {
                 const record = existingRecords.find(r => r.student === student._id);
-                // Default to 'Present' if no record exists, otherwise use saved status
+                 
                 initialAttendance[student._id] = record ? record.status : 'Present';
             });
 
@@ -50,17 +50,17 @@ const Attendance = () => {
     };
 
     const handleStatusChange = async (studentId, status) => {
-        // Optimistic update
+         
         setAttendanceData(prev => ({ ...prev, [studentId]: status }));
 
-        // Auto-save on click as implied by "when clicked present it stays on present basically save it"
-        // But usually bulk save is better. The prompt says "basically save it". 
-        // I'll keep the Submit button for batch saving to reduce API calls, 
-        // OR I can implement individual save. 
-        // The prompt says: "when clicked present it stays on present basically save it". 
-        // This suggests immediate persistence or at least state persistence.
-        // I will keep the Submit button for clarity and network efficiency, 
-        // but the state "stays".
+         
+         
+         
+         
+         
+         
+         
+         
     };
 
     const handleSubmit = async () => {
@@ -94,7 +94,7 @@ const Attendance = () => {
             </h2>
 
             <div className="flex flex-col md:flex-row gap-6">
-                {/* Left Sidebar: Class Selection */}
+                { }
                 <div className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow h-fit">
                     <h3 className="text-xl font-bold mb-4 border-b pb-2">Select Class</h3>
                     <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
@@ -113,15 +113,15 @@ const Attendance = () => {
                     </div>
                 </div>
 
-                {/* Right Content: Attendance Table */}
+                { }
                 <div className="w-full md:w-3/4">
-                    {/* Header with Date */}
+                    { }
                     <div className="bg-white p-6 rounded-lg shadow mb-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                         <div>
                             <h3 className="text-2xl font-bold text-gray-800 mb-1">Class {selectedClass}</h3>
                             <p className="text-gray-500 text-lg">{formatDate(currentDate)}</p>
                         </div>
-                        {/* Status Summary (Optional nice-to-have) */}
+                        { }
                         <div className="mt-4 md:mt-0 flex gap-4 text-sm font-bold">
                             <span className="text-green-600 bg-green-50 px-3 py-1 rounded">
                                 Present: {Object.values(attendanceData).filter(s => s === 'Present').length}

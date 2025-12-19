@@ -1,8 +1,8 @@
 import Fee from '../models/Fee.js';
 
-// @desc    Add fee
-// @route   POST /api/fees
-// @access  Private/Admin
+ 
+ 
+ 
 const addFee = async (req, res) => {
     const { student, amount, month, year, status } = req.body;
 
@@ -23,9 +23,9 @@ const addFee = async (req, res) => {
     }
 };
 
-// @desc    Get all fees
-// @route   GET /api/fees
-// @access  Private/Admin
+ 
+ 
+ 
 const getFees = async (req, res) => {
     try {
         const fees = await Fee.find({}).populate('student', 'name admissionNumber rollNumber class');

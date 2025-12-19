@@ -16,14 +16,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+ 
 app.use(cors({
     origin: '*',
     credentials: true
 }));
 app.use(express.json());
 
-// Routes
+ 
 app.use('/api/users', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
@@ -32,17 +32,17 @@ app.use('/api/fees', feeRoutes);
 app.use('/api/routines', routineRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
-// Database Connection
+ 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+ 
 app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
-// Start the server
+ 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -51,7 +51,7 @@ const Teachers = () => {
                 </button>
             </div>
 
-            {/* Search */}
+            { }
             <div className="mb-6">
                 <input
                     type="text"
@@ -62,7 +62,7 @@ const Teachers = () => {
                 />
             </div>
 
-            {/* List */}
+            { }
             <div className="bg-white p-6 rounded-lg shadow">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredTeachers.map((teacher) => (

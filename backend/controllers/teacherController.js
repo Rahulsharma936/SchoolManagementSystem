@@ -1,8 +1,8 @@
 import Teacher from '../models/Teacher.js';
 
-// @desc    Add a teacher
-// @route   POST /api/teachers
-// @access  Private/Admin
+ 
+ 
+ 
 const addTeacher = async (req, res) => {
     const { name, subject, email, phone, address, salary } = req.body;
 
@@ -23,9 +23,9 @@ const addTeacher = async (req, res) => {
     }
 };
 
-// @desc    Get all teachers
-// @route   GET /api/teachers
-// @access  Private/Admin
+ 
+ 
+ 
 const getTeachers = async (req, res) => {
     try {
         const teachers = await Teacher.find({});
@@ -35,9 +35,9 @@ const getTeachers = async (req, res) => {
     }
 };
 
-// @desc    Delete a teacher
-// @route   DELETE /api/teachers/:id
-// @access  Private/Admin
+ 
+ 
+ 
 const deleteTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.params.id);

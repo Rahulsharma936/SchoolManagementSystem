@@ -1,9 +1,9 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 
-// @desc    Auth user & get token
-// @route   POST /api/users/login
-// @access  Public
+ 
+ 
+ 
 const authUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -22,9 +22,9 @@ const authUser = async (req, res) => {
     }
 };
 
-// @desc    Register a new user
-// @route   POST /api/users/register
-// @access  Public
+ 
+ 
+ 
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 

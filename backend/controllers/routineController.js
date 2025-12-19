@@ -1,8 +1,8 @@
 import Routine from '../models/Routine.js';
 
-// @desc    Add routine item
-// @route   POST /api/routines
-// @access  Private/Admin
+ 
+ 
+ 
 const addRoutine = async (req, res) => {
     const { class: className, day, period, subject, teacher, time } = req.body;
 
@@ -23,12 +23,12 @@ const addRoutine = async (req, res) => {
     }
 };
 
-// @desc    Get routine by class
-// @route   GET /api/routines/:class
-// @access  Private
+ 
+ 
+ 
 const getRoutineByClass = async (req, res) => {
     try {
-        // Case insensitive/trim could be needed but keeping simple for now
+         
         const routines = await Routine.find({ class: req.params.class }).sort({ day: 1, period: 1 });
         res.json(routines);
     } catch (error) {

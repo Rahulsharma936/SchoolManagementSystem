@@ -47,7 +47,7 @@ const Fee = () => {
         e.preventDefault();
         setMessage('');
 
-        // 1. Find the student by Admission Number
+         
         const foundStudent = students.find(s =>
             s.admissionNumber.toString().trim() === formData.admissionNumber.toString().trim()
         );
@@ -57,8 +57,8 @@ const Fee = () => {
             return;
         }
 
-        // Optional: Verify name matches (loosely) if desired, but Admission # is authority.
-        // For now, we trust the Admission #.
+         
+         
 
         try {
             const payload = {
@@ -94,7 +94,7 @@ const Fee = () => {
             <div className="bg-white p-6 rounded shadow mb-8">
                 <h3 className="text-xl font-bold mb-4">Add Fee</h3>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Manual Inputs instead of Dropdown */}
+                    { }
                     <div>
                         <label className="block text-gray-700 mb-2">Student Name</label>
                         <input
